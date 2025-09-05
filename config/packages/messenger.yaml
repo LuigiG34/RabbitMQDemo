@@ -1,0 +1,33 @@
+framework:
+  messenger:
+    failure_transport: failed
+
+    transports:
+      async_high:
+        dsn: '%env(MESSENGER_TRANSPORT_DSN_HIGH)%'
+        retry_strategy:
+          max_retries: 5
+          delay: 1000
+          multiplier: 2.0
+          max_delay: 60000
+
+      async:
+        dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+        retry_strategy:
+          max_retries: 5
+          delay: 1000
+          multiplier: 2.0
+          max_delay: 60000
+
+      async_low:
+        dsn: '%env(MESSENGER_TRANSPORT_DSN_LOW)%'
+        retry_strategy:
+          max_retries: 5
+          delay: 1000
+          multiplier: 2.0
+          max_delay: 60000
+
+      failed: 'doctrine://default?queue_name=failed&auto_setup=1'
+
+    routing:
+      App\Message\SendEmailMessage: async
