@@ -19,31 +19,41 @@ class SendEmailMessageHandler
 
     public function __invoke(SendEmailMessage $message): void
     {
+        $repo = $this->em->getRepository(EmailLog::class);
+
+        // Load existing log by messageId (idempotency)
+        $log = $repo->findOneBy(['messageId' => $message->getMessageId()]);
+
+        if (!$log) {
+            $log = new EmailLog(
+                $message->getMessageId(),
+                $message->getRecipient(),
+                $message->getSubject(),
+                $message->getBody()
+            );
+            $this->em->persist($log);
+        } else {
+            // If we already marked it sent, do nothing (avoid duplicate sends)
+            if ($log->getStatus() === 'sent') {
+                return;
+            }
+        }
+
         $email = (new Email())
             ->from('no-reply@demo.local')
             ->to($message->getRecipient())
             ->subject($message->getSubject())
             ->text($message->getBody());
 
-        $log = new EmailLog(
-            $message->getMessageId(),
-            $message->getRecipient(),
-            $message->getSubject(),
-            $message->getBody()
-        );
-
         try {
             $this->mailer->send($email);
             $log->markSent();
-        } catch (\Throwable $e) {
-            $log->markFailed($e->getMessage());
-            $this->em->persist($log);
             $this->em->flush();
-
+        } catch (\Throwable $e) {
+            // Record the attempt & error, then let Messenger retry
+            $log->markAttempt($e->getMessage());
+            $this->em->flush();
             throw $e;
         }
-
-        $this->em->persist($log);
-        $this->em->flush();
     }
 }
