@@ -26,17 +26,17 @@ A Symfony project demonstrating the use of RabbitMQ.
 
 3. Install PHP Dependencies
    ```
-   docker compose exec app composer install
+   docker compose exec php composer install
    ```
 
 4. Create Database
    ```
-   docker compose exec app php bin/console doctrine:database:create
+   docker compose exec php php bin/console doctrine:database:create
    ```
 
 5. Generate Database Migration
    ```
-   docker compose exec app php bin/console make:migration
+   docker compose exec php php bin/console make:migration
    ```
 
 6. Apply Database Migration
@@ -61,8 +61,8 @@ A Symfony project demonstrating the use of RabbitMQ.
    ```
 *We process messages from priority high → normal → low priority*
 
-9. Run tests + Create DB for tests (Optionnal)
+9. Create test DB & Run tests
    ```
-   docker compose exec app php bin/console doctrine:database:create --env=test
-   docker compose exec app php ./bin/phpunit --testdox
+   docker compose exec php php bin/console doctrine:database:create --env=test
+   docker compose exec php vendor/bin/phpunit --testdox
    ```

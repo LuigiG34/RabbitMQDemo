@@ -1,0 +1,10 @@
+framework:
+  messenger:
+    failure_transport: failed
+    transports:
+      async_high: 'sync://'
+      async: 'sync://'
+      async_low: 'sync://'
+      failed: 'in-memory://'
+    routing:
+      App\Message\SendEmailMessage: async
