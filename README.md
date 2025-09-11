@@ -15,8 +15,8 @@ A Symfony project demonstrating the use of RabbitMQ.
 ## 2) Installation / Run
 1. Clone the Repository
    ```
-   git clone https://github.com/LuigiG34/RedisDemo
-   cd RedisDemo
+   git clone https://github.com/LuigiG34/RabbitMQDemo
+   cd RabbitMQDemo
    ```
 
 2. Start Docker Containers
